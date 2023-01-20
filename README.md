@@ -1,4 +1,4 @@
-# Lista-de-terefas
+# Lista-de-tarefas
 
 🚀 UM SIMPLES APP PARA CRIAR TAREFAS 📝✅
 
