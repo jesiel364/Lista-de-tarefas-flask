@@ -1,0 +1,28 @@
+.item{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.tarefas-div{
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: auto;
+    
+}
+
+#input-text{
+    max-width: 600px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.div-bt{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}

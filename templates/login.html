@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %} Lista de Terefas {% endblock %}
+
+{% block content %}
+<h1 class="title m-5">Food Del</h1>
+<form>
+  <!-- Email input -->
+  <div class="form-outline mb-4 m-auto">
+    <input type="email" id="form1Example1" class="form-control" />
+    <label class="form-label" for="form1Example1">Email</label>
+  </div>
+
+  <!-- Password input -->
+  <div class="form-outline mb-4">
+    <input type="password" id="form1Example2" class="form-control" />
+    <label class="form-label" for="form1Example2">Senha</label>
+  </div>
+
+  <!-- 2 column grid layout for inline styling -->
+  <div class="row mb-4">
+    <div class="col d-flex justify-content-center">
+      <!-- Checkbox -->
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+        <label class="form-check-label" for="form1Example3"> Lembrar</label>
+      </div>
+    </div>
+
+    <div class="col">
+      <!-- Simple link -->
+      <a href="#!">Esqueceu a senha?</a>
+    </div>
+  </div>
+
+  <!-- Submit button -->
+  <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+</form>
+{% endblock %}

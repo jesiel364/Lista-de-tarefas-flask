@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Lista de Tarefas{% endblock %}
+
+{% block content %}
+<div class='m-3 text-center'>
+    <h1>Tarefas</h1>
+    
+</div>
+
+<div id='input-text' class='m-3'>
+<form method="post">
+<div class="form-outline">
+  <input type="text" name="titulo" class="form-control" />
+  <label class="form-label" for="form12">Digite uma nova tarefa</label>
+  
+</div>
+<div class='text-center mt-3'>
+<button style="background-color: #0205d3;" type="submit" class="btn btn-primary">Salvar</button>
+</div>
+</form>
+</div>
+<hr>
+
+<div class="tarefas-div">
+        {% for tarefa in tarefas %}
+        <div class='card m-1'>
+<div class="item">
+
+    <p style="font-size: 18px" class=''>{{tarefa.titulo}}</p>
+    <div class="div-bt">
+        {% if tarefa.concluido == 'true' %}
+           <a href='/update/{{tarefa.id}}'><button type="button" class="btn btn-primary btn-floating">
+  <i class="fas fa-check"></i>
+</button></a>
+        {% else %}
+   <a href='/update/{{tarefa.id}}'><button type="button" class="btn btn-warning btn-floating">
+  <i class="fas fa-close"></i>
+</button></a>
+    {% endif %}
+    <a href="/delete/{{tarefa.id}}"><button type="button" class="btn btn-danger btn-floating">
+  <i class="fas fa-trash"></i>
+</button></a>
+    <button type="button" class="btn btn-primary btn-floating">
+  <i class="far fa-edit"></i>
+</button>
+</div>
+   </div>
+
+</div>
+   {% endfor %}
+</div>
+{% endblock %}
