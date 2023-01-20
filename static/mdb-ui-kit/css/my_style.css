@@ -14,11 +14,33 @@
     
 }
 
+header{
+
+}
+
 #input-text{
-    max-width: 600px;
-    margin: auto;
-    display: flex;
+    /*display: flex;
     flex-direction: column;
+    background-color: red;
+    justify-content: center;*/
+  /*  display: flex;
+    flex-direction: row;
+    
+    
+    justify-content: center;
+    background-color: springgreen;*/
+    
+    
+    
+}
+
+#input-text form{
+    max-width: 500px;
+    
+   }
+
+#inp{
+    
 }
 
 .div-bt{
