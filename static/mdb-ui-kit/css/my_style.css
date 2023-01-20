@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+
+#logo{
+    font-family: 'Dancing Script', cursive;
+}
+
 .item{
     display: flex;
     justify-content: space-between;
@@ -29,7 +35,7 @@ header{
     
     justify-content: center;
     background-color: springgreen;*/
-    
+
     
     
 }
@@ -40,11 +46,18 @@ header{
    }
 
 #inp{
-    
+
+    max-width: 475px;
 }
 
 .div-bt{
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
+}
+
+hr{
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
