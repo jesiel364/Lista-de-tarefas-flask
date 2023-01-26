@@ -58,12 +58,29 @@ header{
 
 .div-bt{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-arround;
     margin-bottom: 12px;
+    
 }
 
 hr{
     max-width: 500px;
     margin-left: auto;
     margin-right: auto;
+}
+
+#nav-div{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    
+}
+
+#hide-div{
+    display: none;
+}
+
+#toast-bt{
+    font-size: 26px;
+    
 }

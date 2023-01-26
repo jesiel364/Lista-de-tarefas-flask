@@ -4,8 +4,12 @@ import sqlite3 as sql
 import sqlalchemy
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy import Column, String, Integer
+from models.forms import LoginForm
+from horaData import t
 
-engine = sqlalchemy.create_engine('sqlite:///data.db', echo = True)
+print(t)
+
+engine = sqlalchemy.create_engine('sqlite:///data.db', echo = False)
 
 Base = declarative_base()
 class Tarefas(Base):
@@ -13,6 +17,7 @@ class Tarefas(Base):
     id = Column( Integer, primary_key=True)
     titulo = Column(String(50))
     concluido = Column(String)
+    created_at = Column(String)
   
 Base.metadata.create_all(engine)
 
@@ -43,7 +48,7 @@ def salvar():
             return redirect(url_for('index'))
         Session = sessionmaker(bind=engine)
         session = Session()
-        tarefa = Tarefas(titulo=titulo_text, concluido='false')
+        tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = t)
         session.add(tarefa)
         session.commit()
         #flash('Dados inseridos com sucesso.', 'success')
@@ -76,6 +81,23 @@ def update(id):
         session.commit()
     return redirect(url_for('index')) #redirect(url_for('index'))
 
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    form = LoginForm()
+    if form.validate_on_submit():
+        return form.username.data
+    else:
+        flash("Erro", "danger")
+    return render_template('register.html', form=form)
+    
+@app.route('/login', methods= ['POST', 'GET'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        return form.username.data
+    else:
+        flash("erro", "danger")    
+    return render_template('login.html', form=form)
 
 if __name__ == '__main__':
     app.secret_key='12345'
