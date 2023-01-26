@@ -46,7 +46,7 @@ header{
     
 }
 
-#input-text form{
+#input-text form #pills{
     max-width: 500px;
     
    }
