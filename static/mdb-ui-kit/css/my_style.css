@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+#logo{
+    font-family: 'Dancing Script', cursive;
+    font-size: 64px;
+}
+
+p{
+    font-family: 'Lato', sans-serif;
+}
+
+.item{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 20px;
+}
+
+.tarefas-div{
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: auto;
+    
+}
+
+header{
+    max-width: 475px;
+}
+
+#input-text{
+    /*display: flex;
+    flex-direction: column;
+    background-color: red;
+    justify-content: center;*/
+  /*  display: flex;
+    flex-direction: row;
+    
+    
+    justify-content: center;
+    background-color: springgreen;*/
+
+    
+    
+}
+
+#input-text form #pills{
+    max-width: 500px;
+    
+   }
+
+#inp{
+
+    max-width: 475px;
+}
+
+.div-bt{
+    display: flex;
+    justify-content: space-arround;
+    margin-bottom: 12px;
+    
+}
+
+hr{
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#nav-div{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    
+}
+
+#hide-div{
+    display: none;
+}
+
+#toast-bt{
+    font-size: 26px;
+    
+}
+
+#pills{
+    max-width: 475px;
+}
+
