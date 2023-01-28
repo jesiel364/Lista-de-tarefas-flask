@@ -5,9 +5,7 @@ import sqlalchemy
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy import Column, String, Integer
 from models.forms import LoginForm
-from horaData import t
-
-print(t)
+from horaData import t, hoje, simples, Tempo
 
 engine = sqlalchemy.create_engine('sqlite:///data.db', echo = False)
 
@@ -37,7 +35,9 @@ def index():
     Session = sessionmaker(bind=engine)
     session = Session()
     tarefas = session.query(Tarefas).order_by(-Tarefas.id)
-    return render_template('home.html', tarefas = tarefas)
+    
+    
+    return render_template('home.html', tarefas = tarefas, hoje = int(hoje))
 
 @app.route('/', methods=['POST', 'GET'])
 def salvar():
@@ -48,7 +48,7 @@ def salvar():
             return redirect(url_for('index'))
         Session = sessionmaker(bind=engine)
         session = Session()
-        tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = t)
+        tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
         session.add(tarefa)
         session.commit()
         #flash('Dados inseridos com sucesso.', 'success')

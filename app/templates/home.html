@@ -7,7 +7,7 @@
     
 </div>
 
-<header>
+<header class="m-3">
 <div id='input-text' class='m-1'>
 <form class="card mx-auto p-3" method="post">
 <div id="inp" class="form-outline mx-auto">
@@ -46,7 +46,7 @@
       role="tab"
       aria-controls="ex1-pills-2"
       aria-selected="false"
-      >NÃO FINALIZADOS ❌</a
+      >NÃO FINALIZADAS ❌</a
     >
   </li>
   <li class="nav-item" role="presentation">
@@ -58,7 +58,7 @@
       role="tab"
       aria-controls="ex1-pills-3"
       aria-selected="false"
-      >CONCLUIDOS ✅</a
+      >CONCLUIDAS ✅</a
     >
   </li>
 </ul>
@@ -82,6 +82,7 @@
     <p style="font-size: 18px" class=''>{{tarefa.titulo}}</p>
     {% if tarefa.created_at == None %}
     <small>Há algum tempo</small>
+   
     {% else %}
     <small>{{tarefa.created_at}}</small>
     {% endif %}
