@@ -21,13 +21,14 @@ p{
 .tarefas-div{
     display: flex;
     flex-direction: column;
-    max-width: 500px;
+    max-width: 600px;
     margin: auto;
     
 }
 
-header{
-    max-width: 475px;
+header, #inp, #pills{
+    max-width: 600px;
+
 }
 
 #input-text{
@@ -51,10 +52,6 @@ header{
     
    }
 
-#inp{
-
-    max-width: 475px;
-}
 
 .div-bt{
     display: flex;
@@ -85,7 +82,4 @@ hr{
     
 }
 
-#pills{
-    max-width: 475px;
-}
 
