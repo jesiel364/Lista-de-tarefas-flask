@@ -7,7 +7,7 @@ function hideFlash() {
       el.style.display = 'none';
       }
       else if(el.style.display != 'block'){
-      el.style.display = 'block';
+      el.style.display = 'none';
       }
     }
     

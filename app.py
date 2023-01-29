@@ -43,7 +43,7 @@ query_user = session_sq.query(Tarefas)
 
 
 app = Flask(__name__)
-messages = []
+notifications = ['verifique seu email']
 app.secret_key='12345'
 
 @app.route('/')
@@ -51,8 +51,9 @@ def index():
     if('user' in session):
         flash(f"Olá, {session['user']}", "success")
     else:
-        flash('Você não está logado!', 'warning')
-        return redirect(url_for('login'))
+        pass
+        # flash('Você não está logado!', 'warning')
+        # return redirect(url_for('index'))
     Session = sessionmaker(bind=engine)
     session_sq = Session()
     tarefas = session_sq.query(Tarefas).order_by(-Tarefas.id)
@@ -107,20 +108,22 @@ def update(id):
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if('user' in session):
-        return flash(f"Olá, {session['user']}")
-    if request.method == 'POST':
-        nome = request.form['nome']
-        email = request.form['email']
-        senha = request.form['senha']
-        try:
-            user = auth.create_user_with_email_and_password(email, senha)
-            flash('Conta criada', 'success')
-            session['user'] = email
-            return redirect(url_for('index'))
-        except:
-            flash('Falha ao logar', 'danger')
-            return render_template('home.html') 
-    return render_template('register.html')
+        flash(f"Você já está logado",'warning')
+        redirect(url_for('index'))
+    else:
+        if request.method == 'POST':
+            nome = request.form['nome']
+            email = request.form['email']
+            senha = request.form['senha']
+            try:
+                user = auth.create_user_with_email_and_password(email, senha)
+                flash('Conta criada', 'success')
+                session['user'] = email
+                return redirect(url_for('index'))
+            except:
+                flash('Falha ao logar', 'danger')
+                return render_template('home.html') 
+    # return render_template('register.html')
     
 @app.route('/login', methods= ['POST', 'GET'])
 def login():
