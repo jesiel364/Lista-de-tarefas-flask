@@ -48,6 +48,11 @@ app.secret_key='12345'
 
 @app.route('/')
 def index():
+    if('user' in session):
+        flash(f"Olá, {session['user']}", "success")
+    else:
+        flash('Você não está logado!', 'warning')
+        return redirect(url_for('login'))
     Session = sessionmaker(bind=engine)
     session_sq = Session()
     tarefas = session_sq.query(Tarefas).order_by(-Tarefas.id)
@@ -101,35 +106,47 @@ def update(id):
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-    if('user' in  session):
+    if('user' in session):
         return flash(f"Olá, {session['user']}")
     if request.method == 'POST':
-        nome = request.form.get('nome')
-        email = request.form.get('email')
-        senha = request.form.get('semha')
+        nome = request.form['nome']
+        email = request.form['email']
+        senha = request.form['senha']
         try:
-            user = auth.sign_in_with_email_and_password(email, senha)
+            user = auth.create_user_with_email_and_password(email, senha)
+            flash('Conta criada', 'success')
             session['user'] = email
-            return redirect('index')
+            return redirect(url_for('index'))
         except:
-            return flash('Falha ao logar', 'danger')
-
-
+            flash('Falha ao logar', 'danger')
+            return render_template('home.html') 
     return render_template('register.html')
     
 @app.route('/login', methods= ['POST', 'GET'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        return form.username.data
-    else:
-        flash("erro", "danger")    
-    return render_template('login.html', form=form)
+    if('user' in session):
+        flash(f"Olá, {session['user']}", "success")
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        email = request.form['email']
+        senha = request.form['senha']
+        try:
+            user = auth.sign_in_with_email_and_password(email, senha)
+            session['user'] = email
+            flash('Logado', 'success')
+            
+            return redirect(url_for('index'))
+        except:
+            flash('Email ou senha incorretos!', 'danger')
+            return redirect(url_for('login')) 
+    
+    return render_template('login.html')
 
 
 @app.route('/logout')
 def logout():
     session.pop('user')
+    flash('Deslogado!', 'warning')
     return redirect('/')
 
 if __name__ == '__main__':
