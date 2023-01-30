@@ -82,8 +82,10 @@ def salvar():
         session_sq = Session()
         if('user' in session):
             tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
+            
         else:
             tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
+            flash('Atenção, voce não fez login. As tarefas serão salvas temporariamente', 'danger')
         
         session_sq.add(tarefa)
         session_sq.commit()
