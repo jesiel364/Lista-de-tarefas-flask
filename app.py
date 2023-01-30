@@ -129,7 +129,7 @@ def register():
             except:
                 flash('Falha ao logar', 'danger')
                 return render_template('home.html') 
-    # return render_template('register.html')
+    return render_template('register.html')
     
 @app.route('/login', methods= ['POST', 'GET'])
 def login():
