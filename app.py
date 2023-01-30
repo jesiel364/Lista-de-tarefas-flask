@@ -31,6 +31,7 @@ class Tarefas(Base):
     titulo = Column(String(50))
     concluido = Column(String)
     created_at = Column(String)
+    usuario = Column(String)
   
 Base.metadata.create_all(engine)
 
@@ -56,7 +57,12 @@ def index():
         # return redirect(url_for('index'))
     Session = sessionmaker(bind=engine)
     session_sq = Session()
-    tarefas = session_sq.query(Tarefas).order_by(-Tarefas.id)
+
+    if('user' in session):
+        tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user'])
+    else:
+        tarefas = session_sq.query(Tarefas).filter_by(usuario = None).order_by(-Tarefas.id)
+    
     
     
     return render_template('home.html', tarefas = tarefas, hoje = int(hoje))
@@ -70,7 +76,7 @@ def salvar():
             return redirect(url_for('index'))
         Session = sessionmaker(bind=engine)
         session_sq = Session()
-        tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
+        tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
         session_sq.add(tarefa)
         session_sq.commit()
         session_sq.close()
@@ -103,7 +109,7 @@ def update(id):
         tarefa.concluido='false'
         session_sq.dirty
         session_sq.commit()
-    return  #redirect(url_for('index'))
+    return  redirect(url_for('index'))
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
