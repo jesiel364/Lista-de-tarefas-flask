@@ -48,10 +48,10 @@ app.secret_key='12345'
 
 @app.route('/')
 def index():
-    if('user' in session):
-        flash(f"Olá, {session['user']}", "success")
-    else:
-        pass
+    # if('user' in session):
+    #     flash(f"Olá, {session['user']}", "success")
+    # else:
+    #     pass
         # flash('Você não está logado!', 'warning')
         # return redirect(url_for('index'))
     Session = sessionmaker(bind=engine)
@@ -136,7 +136,7 @@ def login():
         try:
             user = auth.sign_in_with_email_and_password(email, senha)
             session['user'] = email
-            flash('Logado', 'success')
+            flash(f"Olá {session['user']}", "success")
             
             return redirect(url_for('index'))
         except:
