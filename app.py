@@ -32,7 +32,16 @@ class Tarefas(Base):
     concluido = Column(String)
     created_at = Column(String)
     usuario = Column(String)
-  
+
+class Usuarios(Base):
+
+    __tablename__= 'usuarios'
+
+    id = Column( Integer, primary_key=True)
+    nome = Column(String)
+    email = Column(String)
+    foto = Column(String)
+    
 Base.metadata.create_all(engine)
 
 
@@ -49,17 +58,12 @@ app.secret_key='12345'
 
 @app.route('/')
 def index():
-    # if('user' in session):
-    #     flash(f"Olá, {session['user']}", "success")
-    # else:
-    #     pass
-        # flash('Você não está logado!', 'warning')
-        # return redirect(url_for('index'))
+    
     Session = sessionmaker(bind=engine)
     session_sq = Session()
 
     if('user' in session):
-        tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user'])
+        tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
     else:
         tarefas = session_sq.query(Tarefas).filter_by(usuario = None).order_by(-Tarefas.id)
     
@@ -76,7 +80,11 @@ def salvar():
             return redirect(url_for('index'))
         Session = sessionmaker(bind=engine)
         session_sq = Session()
-        tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
+        if('user' in session):
+            tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
+        else:
+            tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
+        
         session_sq.add(tarefa)
         session_sq.commit()
         session_sq.close()
@@ -117,14 +125,21 @@ def register():
         flash(f"Você já está logado",'warning')
         redirect(url_for('index'))
     else:
+        
         if request.method == 'POST':
             nome = request.form['nome']
             email = request.form['email']
             senha = request.form['senha']
             try:
+                # Session = sessionmaker(bind=engine)
+                # session_sq = Session()
                 user = auth.create_user_with_email_and_password(email, senha)
                 flash('Conta criada', 'success')
                 session['user'] = email
+                # usuario = Usuarios(nome = nome, email = email, foto='')
+                # session_sq.add(usuario)
+                # session_sq.commit()
+                
                 return redirect(url_for('index'))
             except:
                 flash('Falha ao logar', 'danger')
@@ -142,7 +157,7 @@ def login():
         try:
             user = auth.sign_in_with_email_and_password(email, senha)
             session['user'] = email
-            flash(f"Olá {session['user']}", "success")
+            #flash(f"Olá {session['name']}", "success")
             
             return redirect(url_for('index'))
         except:
