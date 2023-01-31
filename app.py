@@ -85,7 +85,7 @@ def salvar():
             
         else:
             tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
-            flash('Atenção, voce não fez login. As tarefas serão salvas temporariamente', 'danger')
+            flash('Atenção, as tarefas serão salvas temporariamente, recomendamos fazer o login.', 'danger')
         
         session_sq.add(tarefa)
         session_sq.commit()
