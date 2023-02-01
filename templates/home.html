@@ -89,6 +89,62 @@
   >
     <div class="tarefas-div">
 
+
+
+
+<!-- firebase -->
+       {% for tarefa in pyre.each() %}
+
+        <div class='card m-1'>
+<div class="item">
+    <div id="esq-elements">
+    <p style="font-size: 18px" class=''>{{tarefa.val()['titulo']}}</p>
+    {% if tarefa.val()['created_at'] == None %}
+    <small>Há algum tempo</small>
+   
+    {% else %}
+    <small>{{tarefa.val()['created_at']}}</small>
+    {% endif %}
+    </div>
+    <div class="div-bt">
+        {% if tarefa.val()['concluido'] == 'true' %}
+           <a href='/update/{{tarefa.id}}'><button type="button" class="btn btn-success btn-floating">
+  <i class="fas fa-check"></i>
+</button></a>
+        {% else %}
+   <a href='/update/{{tarefa.id}}'><button type="button" class="btn btn-warning btn-floating">
+  <i class="fas fa-close"></i>
+</button></a>
+    {% endif %}
+    <a href="/delete/{{tarefa.id}}"><button type="button" class="btn btn-danger btn-floating ms-1 me-1">
+  <i class="fas fa-trash"></i>
+</button></a>
+  
+<div class="dropdown">
+  <button
+    class="btn btn-primary btn-floating"
+    type="button"
+    id="dropdownMenuButton"
+    data-mdb-toggle="dropdown"
+    aria-expanded="false"
+  >
+    <i class="fas fa-tags"></i>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <li><a class="dropdown-item" href="#">Mover para </a></li>
+    <li><a class="dropdown-item" href="#">Another action</a></li>
+    <li><a class="dropdown-item" href="#">Something else here</a></li>
+  </ul>
+</div>
+</div>
+   </div>
+
+</div>
+   {% endfor %}
+
+
+
+
         {% for tarefa in tarefas %}
 
         <div class='card m-1'>

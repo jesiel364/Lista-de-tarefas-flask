@@ -21,9 +21,10 @@ config = {
 
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
-
+db =  firebase.database()
 engine = sqlalchemy.create_engine('sqlite:///db/data.db', echo = False)
 
+usuario = ''
 Base = declarative_base()
 class Tarefas(Base):
     __tablename__= 'tarefas'
@@ -58,21 +59,30 @@ app.secret_key='12345'
 
 @app.route('/')
 def index():
-    
-    Session = sessionmaker(bind=engine)
-    session_sq = Session()
-
     if('user' in session):
-        tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
-    else:
-        tarefas = session_sq.query(Tarefas).filter_by(usuario = None).order_by(-Tarefas.id)
     
-    
-    
-    return render_template('home.html', tarefas = tarefas, hoje = int(hoje))
+        Session = sessionmaker(bind=engine)
+        session_sq = Session()
 
+        if('user' in session):
+            tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
+        else:
+            tarefas = session_sq.query(Tarefas).filter_by(usuario = None).order_by(-Tarefas.id)
+
+
+        # Firebase
+        pyre = db.child('tarefas').get()
+        for tarefa in pyre.each():
+            print('Titulo: ' + tarefa.val()['titulo'])
+    
+    
+    
+        return render_template('home.html', tarefas = tarefas, hoje = int(hoje), pyre = pyre)
+    else:
+        return render_template('login.html')
 @app.route('/', methods=['POST', 'GET'])
 def salvar():
+
     if request.method == 'POST':
         titulo_text = request.form['titulo']
         if not titulo_text:
@@ -82,11 +92,22 @@ def salvar():
         session_sq = Session()
         if('user' in session):
             tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
-            
+            data =  {
+                'titulo': titulo_text,
+                'concluido': 'false',
+                'created_at': simples
+            }
         else:
             tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
             flash('Atenção, as tarefas serão salvas temporariamente, recomendamos fazer o login.', 'danger')
-        
+            data =  {
+                'titulo': titulo_text,
+                'concluido': 'false',
+                'created_at': simples
+            }
+
+        # firebase
+        # db.child('tarefas').push(data, session['user'])        
         session_sq.add(tarefa)
         session_sq.commit()
         session_sq.close()
