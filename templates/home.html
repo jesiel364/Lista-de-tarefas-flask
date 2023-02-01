@@ -94,6 +94,7 @@
 
 <!-- firebase -->
        {% for tarefa in pyre.each() |reverse %}
+       {% if tarefa.val()['usuario'] == session['user'] %}
        
         <div class='card m-1'>
 <div class="item">
@@ -140,6 +141,7 @@
    </div>
 
 </div>
+{% endif %}
    {% endfor %}
 
 
@@ -152,7 +154,8 @@
 
 
 
-        {% for tarefa in pyre.each() %}
+        {% for tarefa in pyre.each() |reverse %}
+        {% if tarefa.val()['usuario'] == session['user'] %}
         {% if tarefa.val()['concluido'] == "false" %}
 
         <div class='card m-1'>
@@ -200,6 +203,7 @@
 
 </div>
     {% endif %}
+    {% endif %}
    {% endfor %}
 </div>
   </div>
@@ -214,7 +218,8 @@
 
 
 
-        {% for tarefa in pyre.each() %}
+        {% for tarefa in pyre.each() |reverse %}
+        {% if tarefa.val()['usuario'] == session['user'] %}
         {% if tarefa.val()['concluido'] == "true" %}
 
         <div class='card m-1'>
@@ -261,6 +266,7 @@
    </div>
 
 </div>
+    {% endif %}
     {% endif %}
    {% endfor %}
 </div>

@@ -65,16 +65,22 @@ def index():
         session_sq = Session()
 
         if('user' in session):
-            tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
+            tasks = db.child('tarefas').get()
+            for task in tasks.each():
+                if task.val()['usuario']== session['user']:
+                    tarefas = task
+            # tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
         else:
-            tarefas = session_sq.query(Tarefas).filter_by(usuario = None).order_by(-Tarefas.id)
+            tasks = db.child('tarefas').get()
+            tarefas = tasks
+            
 
 
         # Firebase
         pyre = db.child('tarefas').order_by_key().get()
     
     
-        return render_template('home.html', tarefas = tarefas, hoje = int(hoje), pyre = pyre)
+        return render_template('home.html', hoje = int(hoje), pyre = pyre)
     else:
         return render_template('login.html')
 @app.route('/', methods=['POST', 'GET'])
