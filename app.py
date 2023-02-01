@@ -71,10 +71,7 @@ def index():
 
 
         # Firebase
-        pyre = db.child('tarefas').get()
-        for tarefa in pyre.each():
-            print('Titulo: ' + tarefa.val()['titulo'])
-    
+        pyre = db.child('tarefas').order_by_key().get()
     
     
         return render_template('home.html', tarefas = tarefas, hoje = int(hoje), pyre = pyre)
@@ -88,58 +85,68 @@ def salvar():
         if not titulo_text:
             flash( 'O campo tarefa é necessário!', 'danger')
             return redirect(url_for('index'))
-        Session = sessionmaker(bind=engine)
-        session_sq = Session()
+        # Session = sessionmaker(bind=engine)
+        # session_sq = Session()
         if('user' in session):
-            tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
+            # tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
+            
             data =  {
+                
                 'titulo': titulo_text,
                 'concluido': 'false',
-                'created_at': simples
+                'created_at': simples,
+                'usuario': session['user']
             }
         else:
-            tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
+            # tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
             flash('Atenção, as tarefas serão salvas temporariamente, recomendamos fazer o login.', 'danger')
             data =  {
+                
                 'titulo': titulo_text,
                 'concluido': 'false',
                 'created_at': simples
             }
 
         # firebase
-        # db.child('tarefas').push(data, session['user'])        
-        session_sq.add(tarefa)
-        session_sq.commit()
-        session_sq.close()
+        db.child('tarefas').push(data, session['idToken'])        
+        # session_sq.add(tarefa)
+        # session_sq.commit()
+        # session_sq.close()
         #flash('Dados inseridos com sucesso.', 'success')
         
         return redirect(url_for('index'))
     return render_template('home.html')
 
-@app.route('/delete/<string:id>', methods=['POST', 'GET'])
-def delete(id):
-    Session = sessionmaker(bind=engine)
-    session_sq = Session()
-    tarefa = session_sq.query(Tarefas).filter_by(id=id).first()
-    session_sq.delete(tarefa)
-    session_sq.commit()
-    session_sq.close()
+@app.route('/delete/<string:key>', methods=['POST', 'GET'])
+def delete(key):
+    # Session = sessionmaker(bind=engine)
+    # session_sq = Session()
+    # tarefa = session_sq.query(Tarefas).filter_by(titulo=titulo).first()
+    # session_sq.delete(tarefa)
+    # session_sq.commit()
+    # session_sq.close()
+    
+    #firebase
+    pyre = db.child('tarefas').get()
+    
+    db.child('tarefas').child(key).remove()
     return redirect(url_for('index'))
         
-@app.route('/update/<string:id>', methods=['POST', 'GET'] )
-def update(id):
+@app.route('/update/<string:key>', methods=['POST', 'GET'] )
+def update(key):
     
-    Session = sessionmaker(bind=engine)
-    session_sq = Session()
-    tarefa = session_sq.query(Tarefas).filter_by(id=id).first()
-    if tarefa.concluido == 'false':
-        tarefa.concluido='true'
-        session_sq.dirty
-        session_sq.commit()
+    # Session = sessionmaker(bind=engine)
+    # session_sq = Session()
+    # tarefa = session_sq.query(Tarefas).filter_by(id=id).first()
+    tarefa = db.child('tarefas').child(key).get()
+    if tarefa.val()['concluido'] == 'false':
+        db.child('tarefas').child(key).update({'concluido': 'true'})
     else:
-        tarefa.concluido='false'
-        session_sq.dirty
-        session_sq.commit()
+            db.child('tarefas').child(key).update({'concluido': 'false'})
+                
+    
+    
+    
     return  redirect(url_for('index'))
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -180,6 +187,7 @@ def login():
         try:
             user = auth.sign_in_with_email_and_password(email, senha)
             session['user'] = email
+            session['idToken'] = user['idToken']
             #flash(f"Olá {session['name']}", "success")
             
             return redirect(url_for('index'))
