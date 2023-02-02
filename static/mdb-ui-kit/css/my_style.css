@@ -26,7 +26,7 @@ p{
     
 }
 
-header, #inp, #pills, #register_container, #login_container{
+header, #inp, #pills, #register_container, #login_container, #perfil_container{
     max-width: 600px;
 
 }
@@ -83,4 +83,10 @@ hr{
 }
 
 
+#perfil_container{
 
+}
+
+#img {
+    border-radius: 50%;
+}
