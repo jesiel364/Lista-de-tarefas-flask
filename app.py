@@ -8,6 +8,7 @@ from models.forms import LoginForm
 from horaData import t, hoje, simples, Tempo
 import pyrebase
 
+# FIREBASE CONFIG
 config = {
       'apiKey': "AIzaSyDDQXepg6eW_fygTg6_LM9t1eVPhTvULDc",
       'authDomain': "lista-de-tarefas-c7323.firebaseapp.com",
@@ -22,48 +23,18 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 db =  firebase.database()
-engine = sqlalchemy.create_engine('sqlite:///db/data.db', echo = False)
-
-usuario = ''
-Base = declarative_base()
-class Tarefas(Base):
-    __tablename__= 'tarefas'
-    id = Column( Integer, primary_key=True)
-    titulo = Column(String(50))
-    concluido = Column(String)
-    created_at = Column(String)
-    usuario = Column(String)
-
-class Usuarios(Base):
-
-    __tablename__= 'usuarios'
-
-    id = Column( Integer, primary_key=True)
-    nome = Column(String)
-    email = Column(String)
-    foto = Column(String)
-    
-Base.metadata.create_all(engine)
 
 
-
-
-Session = sessionmaker(bind=engine)
-session_sq = Session()
-query_user = session_sq.query(Tarefas)
-
-
+# FLASK CONFIG
 app = Flask(__name__)
 notifications = ['verifique seu email']
 app.secret_key='12345'
 
+
+# ROTAS
 @app.route('/')
 def index():
     if('user' in session):
-    
-        Session = sessionmaker(bind=engine)
-        session_sq = Session()
-
         if('user' in session):
             tasks = db.child('tarefas').get()
             for task in tasks.each():
@@ -73,8 +44,6 @@ def index():
         else:
             tasks = db.child('tarefas').get()
             tarefas = tasks
-            
-
 
         # Firebase
         pyre = db.child('tarefas').order_by_key().get()
@@ -83,19 +52,15 @@ def index():
         return render_template('home.html', hoje = int(hoje), pyre = pyre)
     else:
         return render_template('login.html')
+
 @app.route('/', methods=['POST', 'GET'])
 def salvar():
-
     if request.method == 'POST':
         titulo_text = request.form['titulo']
         if not titulo_text:
             flash( 'O campo tarefa é necessário!', 'danger')
             return redirect(url_for('index'))
-        # Session = sessionmaker(bind=engine)
-        # session_sq = Session()
-        if('user' in session):
-            # tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples, usuario = session['user'])
-            
+        if('user' in session):            
             data =  {
                 
                 'titulo': titulo_text,
@@ -104,7 +69,6 @@ def salvar():
                 'usuario': session['user']
             }
         else:
-            # tarefa = Tarefas(titulo=titulo_text, concluido='false', created_at = simples)
             flash('Atenção, as tarefas serão salvas temporariamente, recomendamos fazer o login.', 'danger')
             data =  {
                 
@@ -114,24 +78,13 @@ def salvar():
             }
 
         # firebase
-        db.child('tarefas').push(data, session['idToken'])        
-        # session_sq.add(tarefa)
-        # session_sq.commit()
-        # session_sq.close()
-        #flash('Dados inseridos com sucesso.', 'success')
+        db.child('tarefas').push(data, session['idToken'])
         
         return redirect(url_for('index'))
     return render_template('home.html')
 
 @app.route('/delete/<string:key>', methods=['POST', 'GET'])
 def delete(key):
-    # Session = sessionmaker(bind=engine)
-    # session_sq = Session()
-    # tarefa = session_sq.query(Tarefas).filter_by(titulo=titulo).first()
-    # session_sq.delete(tarefa)
-    # session_sq.commit()
-    # session_sq.close()
-    
     #firebase
     pyre = db.child('tarefas').get()
     
@@ -140,20 +93,14 @@ def delete(key):
         
 @app.route('/update/<string:key>', methods=['POST', 'GET'] )
 def update(key):
-    
-    # Session = sessionmaker(bind=engine)
-    # session_sq = Session()
-    # tarefa = session_sq.query(Tarefas).filter_by(id=id).first()
     tarefa = db.child('tarefas').child(key).get()
     if tarefa.val()['concluido'] == 'false':
         db.child('tarefas').child(key).update({'concluido': 'true'})
     else:
             db.child('tarefas').child(key).update({'concluido': 'false'})
                 
-    
-    
-    
     return  redirect(url_for('index'))
+
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -166,20 +113,16 @@ def register():
             nome = request.form['nome']
             email = request.form['email']
             senha = request.form['senha']
+            
             try:
-                # Session = sessionmaker(bind=engine)
-                # session_sq = Session()
                 user = auth.create_user_with_email_and_password(email, senha)
                 flash('Conta criada', 'success')
                 session['user'] = email
-                # usuario = Usuarios(nome = nome, email = email, foto='')
-                # session_sq.add(usuario)
-                # session_sq.commit()
-                
                 return redirect(url_for('index'))
             except:
                 flash('Falha ao logar', 'danger')
                 return render_template('home.html') 
+    
     return render_template('register.html')
     
 @app.route('/login', methods= ['POST', 'GET'])
@@ -190,12 +133,11 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         senha = request.form['senha']
+        
         try:
             user = auth.sign_in_with_email_and_password(email, senha)
             session['user'] = email
             session['idToken'] = user['idToken']
-            #flash(f"Olá {session['name']}", "success")
-            
             return redirect(url_for('index'))
         except:
             flash('Email ou senha incorretos!', 'danger')
@@ -209,6 +151,10 @@ def logout():
     session.pop('user')
     flash('Deslogado!', 'warning')
     return redirect('/')
+
+@app.route('/perfil')
+def perfil():
+    return render_template('perfil.html', perfil = session['user'])
 
 if __name__ == '__main__':
     
