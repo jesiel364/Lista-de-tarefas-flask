@@ -40,6 +40,8 @@ def index():
             tasks = db.child('tarefas').get()
             pastas = db.child('usuarios').get()
             
+            
+            
             usuarios = db.child('usuarios').child('').get()
             for email in usuarios:
                 userEmail = email.val()['email']
@@ -55,10 +57,6 @@ def index():
                         'email': userEmail,
                         'pastas': Pastas
                         }
-                
-            # for task in tasks.each():
-            #     if task.val()['usuario']== session['user']:
-            #         tarefas = task
             
         else:
             tasks = db.child('tarefas').get()
@@ -214,7 +212,7 @@ def toPasta(key):
     token = key[:20]
     pasta = key[20:]
     tarefa = db.child('tarefas').child(token).update({'pasta': pasta}, session['idToken'])
-    flash( tarefa,'dark')
+    flash( f'Movido para {tarefa}','dark')
     
     return redirect(url_for('index'))
 
