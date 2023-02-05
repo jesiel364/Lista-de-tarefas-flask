@@ -45,6 +45,7 @@ def index():
                 userEmail = email.val()['email']
                 userName = email.val()['name']
                 Pastas = email.val()['pastas']
+                print(pastas)
                 
             
                 if userEmail == session['user']:
@@ -55,10 +56,10 @@ def index():
                         'pastas': Pastas
                         }
                 
-            for task in tasks.each():
-                if task.val()['usuario']== session['user']:
-                    tarefas = task
-            # tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
+            # for task in tasks.each():
+            #     if task.val()['usuario']== session['user']:
+            #         tarefas = task
+            
         else:
             tasks = db.child('tarefas').get()
             tarefas = tasks
@@ -67,7 +68,7 @@ def index():
         pyre = db.child('tarefas').order_by_key().get()
     
     
-        return render_template('home.html', hoje = int(hoje), pyre = pyre, userPastas = Pastas)
+        return render_template('home.html', hoje = int(hoje), pyre = pyre, user = perfil)
     else:
         return render_template('login.html')
 
@@ -185,14 +186,14 @@ def logout():
 def perfil():
     if('user' in session):
         userPastas = db.child('usuarios').get()
-        for item in userPastas.each():
-            print(item.val())
+        
         
         usuarios = db.child('usuarios').child('').get()
         for email in usuarios:
             userEmail = email.val()['email']
             userName = email.val()['name']
             Pastas = email.val()['pastas']
+            print(Pastas)
             
         
             if userEmail == session['user']:
@@ -202,17 +203,20 @@ def perfil():
                     'email': userEmail,
                     'pastas': Pastas
 }
-            # else:
-            #     perfil = {
-
-            #         'nome': userName,
-            #         'email': userEmail,
-            #         'pastas': {'pasta1', 'pasta2', 'pasta3'}
-            #     }
+       
     else:
         return redirect(url_for('index'))
     
     return render_template('perfil.html', user = perfil, pastas = userPastas)
+
+@app.route('/addto/<string:key>', methods=['POST', 'GET'] )
+def toPasta(key):
+    token = key[:20]
+    pasta = key[20:]
+    tarefa = db.child('tarefas').child(token).update({'pasta': pasta}, session['idToken'])
+    flash( tarefa,'dark')
+    
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.secret_key='12345'

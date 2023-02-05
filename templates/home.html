@@ -76,20 +76,20 @@
   <!--    >OUTROS ?</a-->
   <!--  >-->
   <!--</li>-->
-{% for pasta in userPastas %}
+{% for pasta in user.pastas %}
 
     <li class="nav-item" role="presentation">
     <a
-      class="nav-link active"
-      id="ex1-tab-1"
+      class="nav-link"
+      id='{{pasta}}'
       data-mdb-toggle="pill"
-      href="#ex1-pills-1"
+      href='{{pasta}}'
       role="tab"
-      aria-controls="ex1-pills-1"
+      aria-controls="{{pasta}}"
       aria-selected="true"
-      ><i class="fas fa-list fa-fw me-2"></i>{{pasta}}
+      >{{pasta}}
   </a
-    >
+    ></li>
     {% endfor %}
 </ul>
 <!-- Pills navs -->
@@ -147,9 +147,10 @@
     <i class="fas fa-tags"></i>
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <li><a class="dropdown-item" href="#">Mover para </a></li>
-    <li><a class="dropdown-item" href="#">Pontuação</a></li>
-    <li><a class="dropdown-item" href="#">Arquivar</a></li>
+    {% for pasta in user.pastas %}
+    <li><a class="dropdown-item" href="/addto/{{tarefa.key()}}{{pasta}}">{{pasta}}</a></li>
+    {% endfor %}
+  
   </ul>
 </div>
 </div>
