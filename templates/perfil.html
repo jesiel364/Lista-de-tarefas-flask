@@ -10,13 +10,30 @@ id='img'
   class="mx-auto"
 />
 	<h2 class="mx-auto ">{{user.nome}}</h2>
-	<h3 class="mx-auto ">{{user.email}}</h3>
-	{% if user.pasta != None %}
-	
-	<p class="mx-auto ">{{user.pastas}}</p>
+	<p class="mx-auto ">{{user.email}}</p>
 
-	{% else %}
-	{% endif %}
+	<!-- <div class="card"> -->
+
+
+	<div class="card-body mx-auto m-3">
+		<div class="card-title"><p class='text-center'>PASTAS</p></div>
+	{% for item in user.pastas %}
+	
+	<button type="button" class="btn btn-info btn-rounded p-2">{{item}}</button>
+	{% endfor %}
+</div>
+
+
+<div class="mx-auto">
+	<button type="button" class="btn btn-outline-dark m-2" data-mdb-ripple-color="dark">Sair</button>
+
+</div>
+<!-- </div> -->
+
+
+
+
+
 </div>
 
 

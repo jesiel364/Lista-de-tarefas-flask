@@ -38,6 +38,23 @@ def index():
     if('user' in session):
         if('user' in session):
             tasks = db.child('tarefas').get()
+            pastas = db.child('usuarios').get()
+            
+            usuarios = db.child('usuarios').child('').get()
+            for email in usuarios:
+                userEmail = email.val()['email']
+                userName = email.val()['name']
+                Pastas = email.val()['pastas']
+                
+            
+                if userEmail == session['user']:
+                    usuario = userName
+                    perfil = {
+                        'nome': userName,
+                        'email': userEmail,
+                        'pastas': Pastas
+                        }
+                
             for task in tasks.each():
                 if task.val()['usuario']== session['user']:
                     tarefas = task
@@ -50,7 +67,7 @@ def index():
         pyre = db.child('tarefas').order_by_key().get()
     
     
-        return render_template('home.html', hoje = int(hoje), pyre = pyre)
+        return render_template('home.html', hoje = int(hoje), pyre = pyre, userPastas = Pastas)
     else:
         return render_template('login.html')
 
@@ -122,7 +139,7 @@ def register():
 
                 'name': nome,
                 'email': email,
-                'pastas': 'Prioridades'
+                'pastas': {'Prioridades': {'1': ''}}
                 }
                 idT = user_login['idToken']
                 db.child('usuarios').push(data, idT)
@@ -167,12 +184,15 @@ def logout():
 @app.route('/perfil')
 def perfil():
     if('user' in session):
-        userPastas = db.child('usuarios').child('usuarios').child('pastas').get()
+        userPastas = db.child('usuarios').get()
+        for item in userPastas.each():
+            print(item.val())
         
         usuarios = db.child('usuarios').child('').get()
         for email in usuarios:
             userEmail = email.val()['email']
             userName = email.val()['name']
+            Pastas = email.val()['pastas']
             
         
             if userEmail == session['user']:
@@ -180,7 +200,7 @@ def perfil():
                 perfil = {
                     'nome': userName,
                     'email': userEmail,
-                    'pastas': userPastas
+                    'pastas': Pastas
 }
             # else:
             #     perfil = {
@@ -192,7 +212,7 @@ def perfil():
     else:
         return redirect(url_for('index'))
     
-    return render_template('perfil.html', user = perfil)
+    return render_template('perfil.html', user = perfil, pastas = userPastas)
 
 if __name__ == '__main__':
     app.secret_key='12345'
