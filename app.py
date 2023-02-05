@@ -8,6 +8,7 @@ from models.forms import LoginForm
 from horaData import t, hoje, simples, Tempo
 import pyrebase
 
+
 # FIREBASE CONFIG
 config = {
       'apiKey': "AIzaSyDDQXepg6eW_fygTg6_LM9t1eVPhTvULDc",
@@ -28,7 +29,7 @@ db =  firebase.database()
 # FLASK CONFIG
 app = Flask(__name__)
 notifications = ['verifique seu email']
-app.secret_key='12345'
+
 
 
 # ROTAS
@@ -116,12 +117,21 @@ def register():
             
             try:
                 user = auth.create_user_with_email_and_password(email, senha)
+                user_login = auth.sign_in_with_email_and_password(email, senha)
+                data = {
+
+                'name': nome,
+                'email': email,
+                'pastas': 'Prioridades'
+                }
+                idT = user_login['idToken']
+                db.child('usuarios').push(data, idT)
                 flash('Conta criada', 'success')
                 session['user'] = email
                 return redirect(url_for('index'))
             except:
                 flash('Falha ao logar', 'danger')
-                return render_template('home.html') 
+                return redirect('/') 
     
     return render_template('register.html')
     
@@ -138,6 +148,8 @@ def login():
             user = auth.sign_in_with_email_and_password(email, senha)
             session['user'] = email
             session['idToken'] = user['idToken']
+            session['user'] = email
+          
             return redirect(url_for('index'))
         except:
             flash('Email ou senha incorretos!', 'danger')
@@ -154,9 +166,35 @@ def logout():
 
 @app.route('/perfil')
 def perfil():
-    return render_template('perfil.html', perfil = session['user'])
+    if('user' in session):
+        userPastas = db.child('usuarios').child('usuarios').child('pastas').get()
+        
+        usuarios = db.child('usuarios').child('').get()
+        for email in usuarios:
+            userEmail = email.val()['email']
+            userName = email.val()['name']
+            
+        
+            if userEmail == session['user']:
+                usuario = userName
+                perfil = {
+                    'nome': userName,
+                    'email': userEmail,
+                    'pastas': userPastas
+}
+            # else:
+            #     perfil = {
+
+            #         'nome': userName,
+            #         'email': userEmail,
+            #         'pastas': {'pasta1', 'pasta2', 'pasta3'}
+            #     }
+    else:
+        return redirect(url_for('index'))
+    
+    return render_template('perfil.html', user = perfil)
 
 if __name__ == '__main__':
-    
+    app.secret_key='12345'
     app.run(debug=True, host='0.0.0.0', port=8080)
     

@@ -5,10 +5,18 @@
 <div id="perfil_container" class="card mx-auto m-3">
 	<img
 id='img'
-  src="https://mdbcdn.b-cdn.net/img/new/standard/city/047.webp"
+  src="{{ url_for('static', filename='images/user.png' )}}"
   alt="Townhouses and Skyscrapers"
+  class="mx-auto"
 />
-	<p>{{perfil}}</p>
+	<h2 class="mx-auto ">{{user.nome}}</h2>
+	<h3 class="mx-auto ">{{user.email}}</h3>
+	{% if user.pasta != None %}
+	
+	<p class="mx-auto ">{{user.pastas}}</p>
+
+	{% else %}
+	{% endif %}
 </div>
 
 
