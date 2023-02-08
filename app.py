@@ -38,7 +38,7 @@ def index():
     if('user' in session):
         if('user' in session):
             tasks = db.child('tarefas').get()
-            pastas = db.child('usuarios').get()
+            # pastas = db.child('usuarios').get()
             
             
             
@@ -46,8 +46,8 @@ def index():
             for email in usuarios:
                 userEmail = email.val()['email']
                 userName = email.val()['name']
-                Pastas = email.val()['pastas']
-                print(pastas)
+                # Pastas = email.val()['pastas']
+                # print(pastas)
                 
             
                 if userEmail == session['user']:
@@ -55,7 +55,7 @@ def index():
                     perfil = {
                         'nome': userName,
                         'email': userEmail,
-                        'pastas': Pastas
+                        'pastas': 'Pastas'
                         }
             
         else:
@@ -207,14 +207,14 @@ def perfil():
     
     return render_template('perfil.html', user = perfil, pastas = userPastas)
 
-@app.route('/addto/<string:key>', methods=['POST', 'GET'] )
-def toPasta(key):
-    token = key[:20]
-    pasta = key[20:]
-    tarefa = db.child('tarefas').child(token).update({'pasta': pasta}, session['idToken'])
-    flash( f'Movido para {tarefa}','dark')
+# @app.route('/addto/<string:key>', methods=['POST', 'GET'] )
+# def toPasta(key):
+#     token = key[:20]
+#     pasta = key[20:]
+#     tarefa = db.child('tarefas').child(token).update({'pasta': pasta}, session['idToken'])
+#     flash( f'Movido para {tarefa}','dark')
     
-    return redirect(url_for('index'))
+#     return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.secret_key='12345'
