@@ -58,7 +58,7 @@ def salvar():
     if request.method == 'POST':
         titulo_text = request.form['titulo']
         if not titulo_text:
-            flash( 'O campo tarefa é necessário!', 'danger')
+            flash( 'O campo tarefa é necessário !!', 'danger')
             return redirect(url_for('index'))
         if('user' in session):            
             data =  {
