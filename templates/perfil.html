@@ -24,6 +24,36 @@ id='img'
 	{% endfor %}
 </div>
 
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Total', 'Concluidas', 'Não concluidas'],
+      datasets: [{
+        label: 'Estatisticas',
+        data: [{{dados.total}}, 19, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+
 
 <div class="mx-auto">
 	<a href="/logout"><button type="button" class="btn btn-outline-dark m-2" data-mdb-ripple-color="dark">Sair</button></a>

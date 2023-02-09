@@ -53,6 +53,9 @@ def index():
 
         # Firebase
         task_db = db.child('tarefas').order_by_key().get()
+ 
+      
+        
     
     
         return render_template('home.html', hoje = int(hoje), pyre = task_db)
@@ -175,8 +178,25 @@ def perfil():
     if('user' in session):
         userPastas = db.child('usuarios').get()
         
-        
         usuarios = db.child('usuarios').child('').get()
+        
+        task_db = db.child('tarefas').child('').get()
+        conc = []
+    # for t in task_db.each():
+    #     if t.val()['concluido'] == "true":
+    #         '
+    #     else:
+    #         conc = 0
+        try:
+            total = len(task_db.val())
+        except:
+            total = 0
+        estastisticas = {
+            'total': total,
+            'concluido': conc
+        }
+        print(conc)
+        
         for email in usuarios:
             userEmail = email.val()['email']
             userName = email.val()['name']
@@ -194,7 +214,7 @@ def perfil():
     else:
         return redirect(url_for('index'))
     
-    return render_template('perfil.html', user = perfil, pastas = userPastas)
+    return render_template('perfil.html', user = perfil, pastas = userPastas, dados = estastisticas)
 
 if __name__ == '__main__':
     
