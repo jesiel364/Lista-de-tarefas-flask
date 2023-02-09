@@ -27,30 +27,37 @@ db =  firebase.database()
 
 # FLASK CONFIG
 app = Flask(__name__)
-notifications = ['verifique seu email']
+
 app.secret_key='12345'
 
+notifications = [
+    {'label': 'Verifique seu Email', 'link': '#'},
+    {'label': 'Adicione uma foto de perfil', 'link': '/perfil'},
+    {'label':'Qualquer coisa', 'link':'#'}
+]
+notify_len = len(notifications)
+print(notify_len)
+
+@app.context_processor
+def noti():
+    return dict(noti=notifications, nt_len = notify_len)
 
 # ROTAS
 @app.route('/')
 def index():
     if('user' in session):
-        if('user' in session):
-            tasks = db.child('tarefas').get()
-            for task in tasks.each():
-                if task.val()['usuario']== session['user']:
-                    tarefas = task
-            # tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
-        else:
-            tasks = db.child('tarefas').get()
-            tarefas = tasks
+        tasks = db.child('tarefas').get()
+        for task in tasks.each():
+            if task.val()['usuario']== session['user']:
+                tarefas = task
 
         # Firebase
-        pyre = db.child('tarefas').order_by_key().get()
+        task_db = db.child('tarefas').order_by_key().get()
     
     
-        return render_template('home.html', hoje = int(hoje), pyre = pyre)
+        return render_template('home.html', hoje = int(hoje), pyre = task_db)
     else:
+        flash('Você não está logado!!!', 'warning')
         return render_template('login.html')
 
 @app.route('/', methods=['POST', 'GET'])
@@ -160,7 +167,6 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('user')
-    flash('Deslogado!', 'warning')
     return redirect('/')
 
 
@@ -175,8 +181,7 @@ def perfil():
             userEmail = email.val()['email']
             userName = email.val()['name']
             Pastas = email.val()['pastas']
-            print(Pastas)
-            
+        
         
             if userEmail == session['user']:
                 usuario = userName

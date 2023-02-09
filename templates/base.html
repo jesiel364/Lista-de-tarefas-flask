@@ -54,7 +54,7 @@
       <!-- Left links -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-          <a class="nav-link" href="/">Notas</a>
+          <a class="nav-link" href="/"><strong>Tarefas</strong></a>
         </li>
         {% if ('user' in session) == None %}
         <li class="nav-item">
@@ -68,6 +68,7 @@
       <!-- Left links -->
     </div>
     <!-- Collapsible wrapper -->
+{% if ('user' in session) %}
 
     <!-- Right elements -->
     <div class="d-flex align-items-center">
@@ -84,21 +85,20 @@
           aria-expanded="false"
         >
           <i class="fas fa-bell"></i>
-          <span class="badge rounded-pill badge-notification bg-danger">1</span>
+          <span class="badge rounded-pill badge-notification bg-danger">{{nt_len}}</span>
         </a>
         <ul
           class="dropdown-menu dropdown-menu-end"
           aria-labelledby="navbarDropdownMenuLink"
         >
-        {% for item in notifications %}
+       
+       {% for item in noti %}
           <li>
-            <a class="dropdown-item" href="#">{{item}}</a>
+            <a class="dropdown-item" href="{{item.link}}">{{item.label}}</a>
           </li>
-        {% endfor %}
-        <li>
-            <a class="dropdown-item" href="#">item</a>
-            <a class="dropdown-item" href="#">item</a>
-          </li>
+      {% endfor %}
+    
+
          
         </ul>
       </div>
@@ -145,6 +145,7 @@
       </div>
     </div>
     <!-- Right elements -->
+    {% endif %}
   </div>
   <!-- Container wrapper -->
 </nav>
