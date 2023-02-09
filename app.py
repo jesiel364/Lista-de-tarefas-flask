@@ -103,7 +103,9 @@ def update(key):
 
 
 @app.route('/register', methods=['POST', 'GET'])
+
 def register():
+
     if('user' in session):
         flash(f"Você já está logado",'warning')
         redirect(url_for('index'))
@@ -116,12 +118,21 @@ def register():
             
             try:
                 user = auth.create_user_with_email_and_password(email, senha)
+                user_login = auth.sign_in_with_email_and_password(email, senha)
+                data = {
+
+                'name': nome,
+                'email': email,
+                'pastas': {'Prioridades': {'1': ''}}
+                }
+                idT = user_login['idToken']
+                db.child('usuarios').push(data, idT)
                 flash('Conta criada', 'success')
                 session['user'] = email
                 return redirect(url_for('index'))
             except:
                 flash('Falha ao logar', 'danger')
-                return render_template('home.html') 
+                return redirect('/') 
     
     return render_template('register.html')
     
