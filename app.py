@@ -8,7 +8,6 @@ from models.forms import LoginForm
 from horaData import t, hoje, simples, Tempo
 import pyrebase
 
-
 # FIREBASE CONFIG
 config = {
       'apiKey': "AIzaSyDDQXepg6eW_fygTg6_LM9t1eVPhTvULDc",
@@ -29,7 +28,7 @@ db =  firebase.database()
 # FLASK CONFIG
 app = Flask(__name__)
 notifications = ['verifique seu email']
-
+app.secret_key='12345'
 
 
 # ROTAS
@@ -38,26 +37,10 @@ def index():
     if('user' in session):
         if('user' in session):
             tasks = db.child('tarefas').get()
-            # pastas = db.child('usuarios').get()
-            
-            
-            
-            usuarios = db.child('usuarios').child('').get()
-            for email in usuarios:
-                userEmail = email.val()['email']
-                userName = email.val()['name']
-                # Pastas = email.val()['pastas']
-                # print(pastas)
-                
-            
-                if userEmail == session['user']:
-                    usuario = userName
-                    perfil = {
-                        'nome': userName,
-                        'email': userEmail,
-                        'pastas': 'Pastas'
-                        }
-            
+            for task in tasks.each():
+                if task.val()['usuario']== session['user']:
+                    tarefas = task
+            # tarefas = session_sq.query(Tarefas).filter_by(usuario= session['user']).order_by(-Tarefas.id)
         else:
             tasks = db.child('tarefas').get()
             tarefas = tasks
@@ -66,7 +49,7 @@ def index():
         pyre = db.child('tarefas').order_by_key().get()
     
     
-        return render_template('home.html', hoje = int(hoje), pyre = pyre, user = perfil)
+        return render_template('home.html', hoje = int(hoje), pyre = pyre)
     else:
         return render_template('login.html')
 
@@ -133,21 +116,12 @@ def register():
             
             try:
                 user = auth.create_user_with_email_and_password(email, senha)
-                user_login = auth.sign_in_with_email_and_password(email, senha)
-                data = {
-
-                'name': nome,
-                'email': email,
-                'pastas': {'Prioridades': {'1': ''}}
-                }
-                idT = user_login['idToken']
-                db.child('usuarios').push(data, idT)
                 flash('Conta criada', 'success')
                 session['user'] = email
                 return redirect(url_for('index'))
             except:
                 flash('Falha ao logar', 'danger')
-                return redirect('/') 
+                return render_template('home.html') 
     
     return render_template('register.html')
     
@@ -164,8 +138,6 @@ def login():
             user = auth.sign_in_with_email_and_password(email, senha)
             session['user'] = email
             session['idToken'] = user['idToken']
-            session['user'] = email
-          
             return redirect(url_for('index'))
         except:
             flash('Email ou senha incorretos!', 'danger')
@@ -179,6 +151,7 @@ def logout():
     session.pop('user')
     flash('Deslogado!', 'warning')
     return redirect('/')
+
 
 @app.route('/perfil')
 def perfil():
@@ -207,16 +180,7 @@ def perfil():
     
     return render_template('perfil.html', user = perfil, pastas = userPastas)
 
-# @app.route('/addto/<string:key>', methods=['POST', 'GET'] )
-# def toPasta(key):
-#     token = key[:20]
-#     pasta = key[20:]
-#     tarefa = db.child('tarefas').child(token).update({'pasta': pasta}, session['idToken'])
-#     flash( f'Movido para {tarefa}','dark')
-    
-#     return redirect(url_for('index'))
-
 if __name__ == '__main__':
-    app.secret_key='12345'
+    
     app.run(debug=True, host='0.0.0.0', port=8080)
     
