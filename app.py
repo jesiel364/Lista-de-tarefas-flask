@@ -7,6 +7,8 @@ from sqlalchemy import Column, String, Integer
 from models.forms import LoginForm
 from horaData import t, hoje, simples, Tempo
 import pyrebase
+from werkzeug.utils import secure_filename
+import os
 
 # FIREBASE CONFIG
 config = {
@@ -23,6 +25,21 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 db =  firebase.database()
+storage = firebase.storage()
+path_on_cloud = "/usuarios/user.png"
+path_local = "img.png"
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'upload')
+
+file_path = '/usuarios'
+#fotos = storage.child(f"/usuarios/{session['user']}.png").get_url(None)
+
+
+# Upload
+#storage.child(path_on_cloud).put(path_local)
+
+# Download
+#storage.child(path_on_cloud).download("<file_downloaded>")
+
 
 
 # FLASK CONFIG
@@ -38,9 +55,17 @@ notifications = [
 notify_len = len(notifications)
 print(notify_len)
 
+
+    
+
 @app.context_processor
 def noti():
-    return dict(noti=notifications, nt_len = notify_len)
+    if ('user' in session):
+        user_img = storage.child(f"/usuarios/{session['user']}.png").get_url(None)
+        print(user_img)
+    else:
+        user_img = url_for('static', filename='/images/user.png')
+    return dict(noti=notifications, nt_len = notify_len, user_img = user_img)
 
 # ROTAS
 @app.route('/')
@@ -180,27 +205,38 @@ def perfil():
         
         usuarios = db.child('usuarios').child('').get()
         
-        task_db = db.child('tarefas').child('').get()
+        task_db = db.child('tarefas').get()
+        if('user' in session):
+            tasks = db.child('tarefas').get()
+            for task in tasks.each():
+                if task.val()['usuario']== session['user']:
+                    no_c = task
         conc = []
     # for t in task_db.each():
-    #     if t.val()['concluido'] == "true":
+    #    if t.val()['concluido'] == "true":
     #         '
     #     else:
     #         conc = 0
         try:
-            total = len(task_db.val())
+            no_conc = len(no_c.val())
+            
         except:
             total = 0
+            no_conc = 0
         estastisticas = {
-            'total': total,
-            'concluido': conc
+            'total': 1,
+            'concluido': conc,
+            'no_conc': no_conc
         }
         print(conc)
         
-        for email in usuarios:
+        for email in usuarios.each():
             userEmail = email.val()['email']
             userName = email.val()['name']
-            Pastas = email.val()['pastas']
+            try:
+                Pastas = email.val()['folders']
+            except:
+                Pastas = ["Prioridades"]
         
         
             if userEmail == session['user']:
@@ -214,7 +250,28 @@ def perfil():
     else:
         return redirect(url_for('index'))
     
-    return render_template('perfil.html', user = perfil, pastas = userPastas, dados = estastisticas)
+    return render_template('perfil.html', user = perfil, dados = estastisticas)
+    
+@app.route('/upload', methods=['GET','POST'])
+def upload():
+    if request.method == 'POST':
+        file = request.files['img']
+        
+        
+        
+        # Upload
+        savePath = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
+        file.save(savePath)
+        path_on_cloud = f"/usuarios/{session['user']}.png"
+
+        path_local = savePath
+        storage.child(path_on_cloud).put(path_local)
+        flash('Upload feito com sucesso','light')
+        return redirect(url_for('perfil'))
+        
+        
+    return render_template('upload.html')
+
 
 if __name__ == '__main__':
     

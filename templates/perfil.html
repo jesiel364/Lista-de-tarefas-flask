@@ -2,14 +2,15 @@
 {% block title %}Perfil - Tarefas App{% endblock %}
 
 {% block content %}
-<div id="perfil_container" class="card mx-auto mt-5 p-4">
+<div id="perfil_container" class="card mx-auto pt-5 p-4">
     
 	<img
 id='img'
-  src="{{ url_for('static', filename='images/user.png' )}}"
+  src="{{user_img}}"
   alt="Townhouses and Skyscrapers"
   class="mx-auto"
 />
+<a class="mx-auto m-3" href="/upload">Mudar foto de perfil </a>
 	<h2 class="mx-auto ">{{user.nome}}</h2>
 	<p class="mx-auto ">{{user.email}}</p>
 
@@ -24,7 +25,7 @@ id='img'
 	{% endfor %}
 </div>
 
-<div>
+<div class="mx-auto">
   <canvas id="myChart"></canvas>
 </div>
 
@@ -39,7 +40,7 @@ id='img'
       labels: ['Total', 'Concluidas', 'Não concluidas'],
       datasets: [{
         label: 'Estatisticas',
-        data: [{{dados.total}}, 19, 3],
+        data: [{{dados.total}}, 19, {{dados.no_conc}}],
         borderWidth: 1
       }]
     },

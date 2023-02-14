@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card p-3 mx-auto m-5">
+
+<form action="upload" enctype="multipart/form-data" method="post">
+    <label class="form-label " for="customFile">Envie uma imagem de perfil</label>
+<input type="file" class="form-control" name="img" />
+ <!-- Submit button -->
+  <button type="submit" class="btn btn-primary btn-block mt-4">Enviar foto</button>
+    
+    
+</form>
+
+    
+</div>
+
+
+{% endblock %}
