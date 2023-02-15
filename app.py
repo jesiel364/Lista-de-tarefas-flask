@@ -164,9 +164,12 @@ def register():
                 db.child('usuarios').push(data, idT)
                 flash('Conta criada', 'success')
                 session['user'] = email
+                path_on_cloud = f"/usuarios/{session['user']}.png"
+                path_local = "user.png"
+                storage.child(path_on_cloud).put(path_local)
                 return redirect(url_for('index'))
             except:
-                flash('Falha ao logar', 'danger')
+                flash('Falha ao criar conta', 'danger')
                 return redirect('/') 
     
     return render_template('register.html')
