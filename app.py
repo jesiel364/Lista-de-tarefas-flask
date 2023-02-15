@@ -259,18 +259,18 @@ def perfil():
 def upload():
     if request.method == 'POST':
         file = request.files['img']
-        
-        
-        
-        # Upload
-        savePath = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
-        file.save(savePath)
-        path_on_cloud = f"/usuarios/{session['user']}.png"
-
-        path_local = savePath
-        storage.child(path_on_cloud).put(path_local)
-        flash('Upload feito com sucesso','light')
-        return redirect(url_for('perfil'))
+        try:
+           # Upload
+           savePath = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
+           file.save(savePath)
+           path_on_cloud = f"/usuarios/{session['user']}.png"
+           path_local = savePath
+           storage.child(path_on_cloud).put(path_local)
+           flash('Upload feito com sucesso','light')
+           return redirect(url_for('perfil'))
+        except:
+            flash("Não foi possível enviar a foto", 'light')
+            return redirect(url_for('perfil'))
         
         
     return render_template('upload.html')
