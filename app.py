@@ -274,6 +274,23 @@ def upload():
         
         
     return render_template('upload.html')
+    
+@app.route('/reset_senha')
+def page_reset():
+    return render_template("reset_pass.html")
+    
+@app.route('/send_email', methods=["POST", "GET"])
+def send_email():
+    if request.method == "POST":
+        email = request.form["email"]
+       
+        auth.send_password_reset_email(email)
+        
+        return render_template('reset_page.html')
+    else:
+        flash("Não foi possivel enviar o Email", "danger")
+    return  redirect(url_for('index'))
+    
 
 
 if __name__ == '__main__':
