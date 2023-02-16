@@ -3,13 +3,13 @@
 
 {% block content %}
 <div id="perfil_container" class="card mx-auto pt-5 p-4">
-    
+  <div class="mx-auto" id="foto_perfil">
 	<img
 id='img'
   src="{{user_img}}"
   alt="Townhouses and Skyscrapers"
-  class="mx-auto"
-/>
+  class=""
+/></div>
 <a class="mx-auto m-3" href="/upload">Mudar foto de perfil </a>
 	<h2 class="mx-auto ">{{user.nome}}</h2>
 	<p class="mx-auto ">{{user.email}}</p>

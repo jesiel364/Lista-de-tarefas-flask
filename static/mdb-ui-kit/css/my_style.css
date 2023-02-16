@@ -92,3 +92,9 @@ hr{
     width: 200px;
     height: 200px;
 }
+
+#foto_perfil{
+    background-color: #993399;
+    padding: 5px;
+    border-radius: 50%;
+}
